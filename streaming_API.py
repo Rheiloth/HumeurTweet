@@ -4,6 +4,7 @@ from __future__ import print_function
 import tweepy
 import json
 from pymongo import MongoClient
+import sys,os,re,string
 
 MONGO_HOST= 'mongodb://humeurdetweets:3BCbQNP5stAwDZLw@cluster0-shard-00-00-grg0y.mongodb.net:27017,cluster0-shard-00-01-grg0y.mongodb.net:27017,cluster0-shard-00-02-grg0y.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin'
 WORDS = ['#bigdata', '#AI', '#datascience', '#machinelearning', '#ml', '#iot', 'macron']
@@ -38,10 +39,17 @@ class StreamListener(tweepy.StreamListener):
             
             #grab the 'created_at' data from the Tweet to use for display
             created_at = datajson['created_at']
+
+            user = datajson['user']
+            name = user['name']
+            lang = datajson['lang']
+            text = datajson['text']
+
  
             #print out a message to the screen that we have collected a tweet
-            print("Tweet collected at " + str(created_at))
-            
+            print("Tweet de  " + format(name.encode('utf-8'),'>25') + "\tposté le   " + str(created_at) + "\ten " + str(lang.upper()) + "\tenregistré")
+            # print(text + "\n")
+
             #insert the data into the mongoDB into a collection called twitter_search
             #if twitter_search doesn't exist, it will be created.
             db.twitter_search.insert(datajson)
