@@ -6,7 +6,7 @@ import json
 from pymongo import MongoClient
 import sys,os,re,string
 
-MONGO_HOST= 'mongodb://humeurdetweets:3BCbQNP5stAwDZLw@cluster0-shard-00-00-grg0y.mongodb.net:27017,cluster0-shard-00-01-grg0y.mongodb.net:27017,cluster0-shard-00-02-grg0y.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin'
+MONGO_HOST= 'mongodb://31.207.34.34:27017'
 WORDS = ['#bigdata', '#AI', '#datascience', '#machinelearning', '#ml', '#iot', 'macron']
 
 CONSUMER_KEY = "LpIh8UFClODKCCPOk7oOaiP2z"
@@ -49,7 +49,6 @@ class StreamListener(tweepy.StreamListener):
             #print out a message to the screen that we have collected a tweet
             print("Tweet de  " + format(name.encode('utf-8'),'>25') + "\tposté le   " + str(created_at) + "\ten " + str(lang.upper()) + "\tenregistré")
             # print(text + "\n")
-
             #insert the data into the mongoDB into a collection called twitter_search
             #if twitter_search doesn't exist, it will be created.
             db.twitter_search.insert(datajson)
