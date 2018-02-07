@@ -46,12 +46,13 @@ class StreamListener(tweepy.StreamListener):
             text = datajson['text']
 
  
-            #print out a message to the screen that we have collected a tweet
-            print("Tweet de  " + format(name.encode('utf-8'),'>25') + "\tposté le   " + str(created_at) + "\ten " + str(lang.upper()) + "\tenregistré")
-            # print(text + "\n")
-            #insert the data into the mongoDB into a collection called twitter_search
-            #if twitter_search doesn't exist, it will be created.
-            db.twitter_search.insert(datajson)
+            if lang == 'en':
+                #print out a message to the screen that we have collected a tweet
+                print("Tweet de  " + format(name.encode('utf-8'),'>25') + "\tposté le   " + str(created_at) + "\ten " + str(lang.upper()) + "\tenregistré")
+                # print(text + "\n")
+                #insert the data into the mongoDB into a collection called twitter_search
+                #if twitter_search doesn't exist, it will be created.
+                db.twitter_search.insert(datajson)
         except Exception as e:
            print(e)
 
