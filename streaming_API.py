@@ -7,7 +7,7 @@ from pymongo import MongoClient
 import sys,os,re,string
 
 MONGO_HOST= 'mongodb://31.207.34.34:27017'
-WORDS = ['#bigdata', '#AI', '#datascience', '#machinelearning', '#ml', '#iot', 'macron']
+WORDS = ['trump']
 
 CONSUMER_KEY = "LpIh8UFClODKCCPOk7oOaiP2z"
 CONSUMER_SECRET = "VFiecZf2rfDNYhY4m1QsCEIWhy3fC5Idz6ji0wLiwzQ7HhFsYg"
@@ -37,6 +37,9 @@ class StreamListener(tweepy.StreamListener):
             # Decode the JSON from Twitter
             datajson = json.loads(data)
             
+            # On precise que le tweet n'a pas encore été analysé
+            datajson["analyse"] = False
+            
             #grab the 'created_at' data from the Tweet to use for display
             created_at = datajson['created_at']
 
@@ -44,15 +47,30 @@ class StreamListener(tweepy.StreamListener):
             name = user['name']
             lang = datajson['lang']
             text = datajson['text']
-
+            if re.match(r"RT",text):
+                return
  
-            if lang == 'en':
+            if lang == "en":
                 #print out a message to the screen that we have collected a tweet
                 print("Tweet de  " + format(name.encode('utf-8'),'>25') + "\tposté le   " + str(created_at) + "\ten " + str(lang.upper()) + "\tenregistré")
                 # print(text + "\n")
                 #insert the data into the mongoDB into a collection called twitter_search
                 #if twitter_search doesn't exist, it will be created.
+
+                if datajson['truncated'] == False:
+                    datajson['tweet_complet'] = datajson['text']
+                else:
+                    datajson["tweet_complet"] = datajson['extended_tweet']['full_text']                # if "extented_tweet" in datajson.keys():
+                #     print("ok")
+                # datajson["tweet_complet"] = datajson['extended_tweet']['full_text']
+                # elif datajson['retweet_status']['extended_tweet']['full_text']:
+                #     datajson["tweet_complet"] = datajson['retweet_status']['extended_tweet']['full_text']
+                # else:
+                #     datajson['tweet_complet'] = datajson['text']
+
+            
                 db.twitter_search.insert(datajson)
+
         except Exception as e:
            print(e)
 
