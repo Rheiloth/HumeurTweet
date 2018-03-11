@@ -1,3 +1,4 @@
+#-*- coding: utf-8 -*-
 from __future__ import print_function
 import tweepy
 from pymongo import MongoClient
@@ -13,22 +14,17 @@ client = MongoClient(MONGO_HOST)
 db = client.twitterdb
 
 dico = []
+nb = 0
 print("Analyse en cours....")
 for i in db.twitter_search.find():
-    dico.append(i['tweet_corrige'])
+    if (i['tweet_corrige'] != " "):
+        dico.append(i['tweet_corrige'])
+        nb = nb+1
 
-dico = pd.Series(dico).str.cat(sep=' ')
-
-wordcloud = WordCloud(width=1600, height=800,max_font_size=200).generate(dico)
-plt.figure(figsize=(12,10))
-plt.imshow(wordcloud, interpolation="bilinear")
-plt.axis("off")
-plt.show()
-
-image = open("cloud.jpg","w")
-
-
-wordcloud.to_file(image)
-print("Image enregistree sous  cloud.jpg")
-
-image.close()
+if (nb > 1):
+    dico = pd.Series(dico).str.cat(sep=' ')
+    wordcloud = WordCloud(width=885, height=270,max_font_size=200).generate(dico)
+    image = open("public/images/cloud.png","w")
+    wordcloud.to_file(image)
+    print("Image enregistree sous  cloud.jpg")
+    image.close()
